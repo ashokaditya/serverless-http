@@ -20,8 +20,7 @@ describe('express', () => {
     });
 
     return request(app, {
-      httpMethod: 'GET',
-      path: '/'
+      httpMethod: 'GET'
     })
     .then(response => {
       expect(response.statusCode).to.equal(418);
@@ -37,7 +36,6 @@ describe('express', () => {
 
     return request(app, {
       httpMethod: 'GET',
-      path: '/',
       body: 'hello, world',
       headers: {
         'Content-Type': 'text/plain',
@@ -58,7 +56,6 @@ describe('express', () => {
 
     return request(app, {
       httpMethod: 'GET',
-      path: '/',
       body: JSON.stringify({
         hello: 'world'
       }),
@@ -99,8 +96,7 @@ describe('express', () => {
     });
 
     return request(app, {
-      httpMethod: 'PUT',
-      path: '/',
+      httpMethod: 'PUT'
     })
     .then(response => {
       expect(response.statusCode).to.equal(201);
@@ -113,7 +109,7 @@ describe('express', () => {
 
     return request(app, {
       httpMethod: 'GET',
-      path: '/file.txt',
+      path: '/file.txt'
     })
     .then(response => {
       expect(response.statusCode).to.equal(200);
@@ -130,10 +126,10 @@ describe('express', () => {
 
       return request(app, {
         httpMethod: 'GET',
-        path: '/',
         headers: {
           authorization: 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
         },
+        path: '/',
         requestContext: {
           identity: {
             sourceIp: '1.3.3.7'
@@ -153,7 +149,6 @@ describe('express', () => {
 
       return request(app, {
         httpMethod: 'GET',
-        path: '/',
         headers: {
           authorization: 'Basic QWxhZGRpbjpPcGVuU2VzYW1l'
         },
@@ -166,6 +161,22 @@ describe('express', () => {
       .then(response => {
         expect(response.statusCode).to.equal(200);
       });
+    });
+  });
+
+  it('address() returns a stubbed object', () => {
+    app.use(morgan('short'));
+    app.use((req, res) => {
+      console.log(req.connection);
+      res.status(200).send(req.connection.address());
+    });
+
+    return request(app, {
+      httpMethod: 'GET'
+    })
+    .then(response => {
+      expect(response.statusCode).to.equal(200);
+      expect(response.body).to.equal(JSON.stringify({ port: 443 }));
     });
   });
 });
